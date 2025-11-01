@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>//* Standard input-output header file */
+#include <stdlib.h>//* Standard library header file for memory allocation */
 
 //* Definition of the element type */
 typedef int ELemType;  
@@ -60,33 +60,30 @@ void PrintList(LNode *L){
 
 //* Function to find the element at index i (1-based) */
 Status find(LinkList L, int i, ELemType *e){
-    if(i < 1 || i > L->data) return 0;  //* Check if index is valid */
+    if(i < 1 || i > L->data) {
+        return 0;  //* Check if index is valid */
+    }
     LNode *p = L->next;  //* Start from the first node */
     int j = 1;  //* Initialize index counter */
-    while(p != NULL && j < i){
+    while(j < i){//* Traverse to the ith node */
         p = p->next;  //* Move to the next node */
         j++;  //* Increment index counter */
-    }
-    if(p == NULL) return 0;  //* If p is NULL, index is out of bounds */
+    }//* After the loop, p points to the ith node */
     *e = p->data;  //* Retrieve the data at index i */
     return 1;  //* Return success status */
 }
 
 //* Function to insert an element after the nth node (1-based) */
 void insertAfterNth(LinkList L, int n, ELemType e){
-    if(n < 0 || n > L->data) {
+    if(n < 1 || n > L->data) {
         printf("Index out of bounds\n");
         return;  //* Check if index is valid */
     }
     LNode *p = L;  //* Start from the head node */
     int j = 0;  //* Initialize index counter */
-    while(p != NULL && j < n){
+    while(j < n){
         p = p->next;  //* Move to the next node */
         j++;  //* Increment index counter */
-    }
-    if(p == NULL) {
-        printf("Index out of bounds\n");
-        return;  //* If p is NULL, index is out of bounds */
     }
     LNode *newNode = (LNode *)malloc(sizeof(LNode));  //* Create a new node */
     newNode->data = e;  //* Set the data of the new node */
@@ -95,22 +92,44 @@ void insertAfterNth(LinkList L, int n, ELemType e){
     L->data++;  //* Increment the count of nodes */
 }
 
+//* Function to delete the ith node (1-based) */
+void Listdelete(LinkList L, int i){
+    if(i < 1 || i > L->data) {
+        printf("Index out of bounds\n");
+        return;  //* Check if index is valid */
+    }
+    LNode *p = L;  //* Start from the head node */
+    int j = 0;  //* Initialize index counter */
+    while(j < i - 1){
+        p = p->next;  //* Move to the next node */
+        j++;  //* Increment index counter */
+    }
+    LNode *toDelete = p->next;  //* Node to be deleted */
+    p->next = toDelete->next;  //* Bypass the node to be deleted */
+    free(toDelete);  //* Free the memory of the deleted node */
+    L->data--;  //* Decrement the count of nodes */
+}
+
 //* Main function to demonstrate linked list operations */
 int main(){
 
     //* Variables declaration */
-    int n, i, e, choice;
+    int n,i,choice;
+    ELemType e;
 
     //* Create linked lists using head and tail insertion */
 
-    LinkList L1 = CreateList();  //* Create an empty linked list */
     printf("To show the difference in input order between head insertion and tail insertion");
     printf("\nL1:Enter number of elements to insert using head insertion: ");
     scanf("%d", &n);//* Input number of elements */
+
+    //* Create linked list using head insertion */
+    LinkList L1 = CreateList();  //* Create an empty linked list */
     L1 = CreateList_Head(n, L1);  //* Create linked list using head insertion */
     printf("L1:Linked list after head insertion: ");
     PrintList(L1);  //* Print the linked list */
 
+    //* Create linked list using tail insertion */
     LinkList L2 =CreateList();//* Create an empty linked list */
     printf("L2:Enter number of elements to insert using tail insertion: ");
     scanf("%d", &n);//* Input number of elements */
@@ -122,32 +141,43 @@ int main(){
     printf("Choose a list (1 or 2)");
     scanf("%d",&choice);
     LinkList L =CreateList();
-    if (choice==1){
-        L=L1;
-    }else{
-        L=L2;
+    if (choice==1){//* if L1 is chosen */
+        L=L1;// * set L to L1 */
+    }else{//* if L2 is chosen */
+        L=L2;// * set L to L2 */
     }
 
     //* Find element at index i */
     printf("Enter index to find (1-based): ");
-    scanf("%d", &i);
+    scanf("%d", &i);//* Input index */
     if(find(L, i, &e)){
-        printf("Element at index %d: %d\n", i, e);
+        printf("Element at index %d: %d\n", i, e);//* Print the found element */
     } else {
-        printf("Index %d is out of bounds.\n", i);
+        printf("Index %d is out of bounds.\n", i);//* Print out of bounds message */
     }
     
     //* Insert element after nth node */
     printf("Enter index to insert after (1-based) and element to insert: ");
-    scanf("%d %d", &i, &e);
+    scanf("%d %d", &i, &e);//* Input index and element */
     insertAfterNth(L, i, e);  //* Insert element after nth node */
     printf("Linked list after insertion: ");
     PrintList(L);  //* Print the linked list */
 
-    if (choice==1){
-        PrintList(L2);
-    }else{
-        PrintList(L1);
+    //* Delete ith node */
+    printf("Enter index to delete (1-based): ");
+    scanf("%d", &i);//* Input index */
+    Listdelete(L, i);  //* Delete ith node */
+    printf("Linked list after deletion: ");
+    PrintList(L);  //* Print the linked list */
+
+    //* Print the other linked list */
+    printf("Printing the other list \n");//* Print the other linked list */
+    if (choice==1){//* if L1 was chosen */
+        PrintList(L2);//* print L2 */
+    }else{//* if L2 was chosen */
+        PrintList(L1);//* print L1 */
     }  
+
+    //* End of main function */
     return 0;  //* End of program */
 }
